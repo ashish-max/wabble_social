@@ -135,7 +135,6 @@ public class login_screen extends AppCompatActivity {
             });
 
 
-            // Authenticating the user with his/her facebook profile
             facebook_login_button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResults) {
@@ -145,10 +144,6 @@ public class login_screen extends AppCompatActivity {
                                         JSONObject object,
                                         GraphResponse response) {
                                     try {
-                                        // Application code
-                                        // This prints data
-                                        // Pass this data accordingly
-                                        // You can access items using object.getString("email");
                                         Log.v("LoginActivity", object.toString());
                                         final Intent intent = new Intent(getApplicationContext(), profile_screen.class);
                                         intent.putExtra("fullname", object.getString("name"));
