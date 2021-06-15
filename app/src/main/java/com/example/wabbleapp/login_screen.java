@@ -138,9 +138,7 @@ public class login_screen extends AppCompatActivity {
             facebook_login_button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResults) {
-                    GraphRequest request = GraphRequest.newMeRequest(
-                            loginResults.getAccessToken(),
-                            new GraphRequest.GraphJSONObjectCallback() {
+                    GraphRequest request = GraphRequest.newMeRequest(loginResults.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                                 @Override
                                 public void onCompleted(
                                         JSONObject object,
@@ -149,7 +147,7 @@ public class login_screen extends AppCompatActivity {
                                     // This prints data
                                     // Pass this data accordingly
                                     // You can access items using object.getString("email");
-                                    Log.v("LoginActivity", response.toString());
+                                    Log.v("LoginActivity", object.toString());
                                 }
                             });
                     Bundle parameters = new Bundle();
