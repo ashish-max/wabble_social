@@ -20,7 +20,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,8 +46,9 @@ import java.util.Arrays;
 public class login_screen extends AppCompatActivity {
 
         private FirebaseAuth mAuth;
-        Button callSignUp,loginbutton,forgotPass,facebook_login_button;
+        Button callSignUp,loginbutton,forgotPass;
         TextInputLayout email, password;
+        LoginButton facebook_login_button; // Type is LoginButton not Button
         FirebaseDatabase rootNode;
         DatabaseReference reference;
         ProgressBar pb;
@@ -60,7 +66,7 @@ public class login_screen extends AppCompatActivity {
             setContentView(R.layout.activity_login_screen);
 
             facebook_login_button = (LoginButton) findViewById(R.id.facebook_login_button);
-            facebook_login_button.setReadPermissions(Arrays.asList(EMAIL));
+            facebook_login_button.setPermissions(Arrays.asList(EMAIL, "public_profile"));
 
             sloganlogin = findViewById(R.id.signintocontinue);
             logologin = findViewById(R.id.signinlogo);
@@ -73,6 +79,17 @@ public class login_screen extends AppCompatActivity {
 
             mAuth = FirebaseAuth.getInstance();
             rootNode = FirebaseDatabase.getInstance();
+
+
+            // This code is to check if the person has access token for facebook or not.
+            // If the access token is missing then don't login else proceed to login method
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+            // Login can be done with following code
+            //LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+            // The code returns a user ig. Print to see what the user returns before proceeding.
+            // Also you can setup a Access Token tracker to implement the login method
+            // The exact usage depends on your code
 
             callSignUp.setOnClickListener(new View.OnClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -110,6 +127,25 @@ public class login_screen extends AppCompatActivity {
                     }
                 }
             });
+
+
+            // Authenticating the user with his/her facebook profile
+            facebook_login_button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    // Person has authenticated with Facebook
+                    // Now you can log him in
+                }
+                @Override
+                public void onCancel() {
+                    // App code
+                }
+                @Override
+                public void onError(FacebookException exception) {
+                    // App code
+                }
+            });
+
 
             forgotPass.setOnClickListener(new View.OnClickListener() {
                 @Override
