@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "664286470242",
+    "firebase_url": "https://wabble-app-aa7c6.firebaseio.com",
+    "project_id": "wabble-app-aa7c6",
+    "storage_bucket": "wabble-app-aa7c6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:664286470242:android:c28330e3c3ced64b93b13b",
+        "android_client_info": {
+          "package_name": "com.example.wabbleapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "664286470242-8k4a6fuk8sbunp9qeolbbc4r80lavqvb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzSr7hRZ_JC_A6m9E_nEC7Nd1YORBKr8M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "664286470242-8k4a6fuk8sbunp9qeolbbc4r80lavqvb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
