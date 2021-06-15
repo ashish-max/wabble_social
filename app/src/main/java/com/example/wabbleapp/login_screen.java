@@ -134,7 +134,6 @@ public class login_screen extends AppCompatActivity {
             });
 
 
-            // Authenticating the user with his/her facebook profile
             facebook_login_button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResults) {
@@ -143,15 +142,21 @@ public class login_screen extends AppCompatActivity {
                                 public void onCompleted(
                                         JSONObject object,
                                         GraphResponse response) {
-                                    // Application code
-                                    // This prints data
-                                    // Pass this data accordingly
-                                    // You can access items using object.getString("email");
-                                    Log.v("LoginActivity", object.toString());
+                                    try {
+                                        Log.v("LoginActivity", object.toString());
+                                        final Intent intent = new Intent(getApplicationContext(), profile_screen.class);
+                                        intent.putExtra("fullname", object.getString("name"));
+                                        intent.putExtra("phoneNo", "2334455");
+                                        intent.putExtra("email", object.getString("email"));
+                                        startActivity(intent);
+                                        finish();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             });
                     Bundle parameters = new Bundle();
-                    parameters.putString("fields", "id,name,email,gender, birthday");
+                    parameters.putString("fields", "id,name,email,gender");
                     request.setParameters(parameters);
                     request.executeAsync();
                 }
