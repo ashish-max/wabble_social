@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -44,7 +45,8 @@ public class profile_screen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_screen);
-
+        Intent intent = getIntent();
+        boolean isFbLogin = intent.getStringExtra("isFbLogin").equals("true");
         //hooks
         fullname = findViewById(R.id.fullnameprofile);
         phoneNo = findViewById(R.id.mobilenumberprofile);
@@ -128,7 +130,11 @@ public class profile_screen extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) { // Redirects to login_page.xml upon click/tap
                         finish();
-                        mAuth.signOut();
+                        if (isFbLogin) {
+                            LoginManager.getInstance().logOut();
+                        } else {
+                            mAuth.signOut();
+                        }
                         startActivity(new Intent(profile_screen.this, login_screen.class));
                     }
                 });
@@ -137,7 +143,9 @@ public class profile_screen extends AppCompatActivity {
                 alertDialog.show();
 
             }
-        });
+        }
+
+        );
 
         Update.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)

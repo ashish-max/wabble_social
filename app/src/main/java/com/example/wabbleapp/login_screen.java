@@ -44,6 +44,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
@@ -143,15 +144,26 @@ public class login_screen extends AppCompatActivity {
                                 public void onCompleted(
                                         JSONObject object,
                                         GraphResponse response) {
-                                    // Application code
-                                    // This prints data
-                                    // Pass this data accordingly
-                                    // You can access items using object.getString("email");
-                                    Log.v("LoginActivity", object.toString());
+                                    try {
+                                        // Application code
+                                        // This prints data
+                                        // Pass this data accordingly
+                                        // You can access items using object.getString("email");
+                                        Log.v("LoginActivity", object.toString());
+                                        final Intent intent = new Intent(getApplicationContext(), profile_screen.class);
+                                        intent.putExtra("fullname", object.getString("name"));
+                                        intent.putExtra("phoneNo", "2334455");
+                                        intent.putExtra("email", object.getString("email"));
+                                        intent.putExtra("isFbLogin", "true");
+                                        startActivity(intent);
+                                        finish();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             });
                     Bundle parameters = new Bundle();
-                    parameters.putString("fields", "id,name,email,gender, birthday");
+                    parameters.putString("fields", "id,name,email,gender");
                     request.setParameters(parameters);
                     request.executeAsync();
                 }
@@ -298,6 +310,7 @@ public class login_screen extends AppCompatActivity {
                                     intent.putExtra("fullname",nameFromDataBase);
                                     intent.putExtra("phoneNo",phoneNoFromDataBase);
                                     intent.putExtra("email",emailFromDataBase);
+                                    intent.putExtra("isFbLogin", "false");
 
 
                                     Pair[] pairs = new Pair[2];
