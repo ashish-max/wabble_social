@@ -251,37 +251,37 @@ public class login_screen extends AppCompatActivity {
         }
 
     private void GooglesignIn() {
+            Log.v("Main Login", "Signin");
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-            final Intent intent = new Intent(getApplicationContext(), profile_screen.class);
-            if (acct != null) {
-                String personName = acct.getDisplayName();
+            GoogleSignInAccount acct = completedTask.getResult(ApiException.class);
+            Log.v("Main Login", acct.toString());
+//            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            Intent intent = new Intent(getApplicationContext(), profile_screen.class);
+            String personName = acct.getDisplayName();
 //                String personGivenName = acct.getGivenName();
 //                String personFamilyName = acct.getFamilyName();
-                String personEmail = acct.getEmail();
+            String personEmail = acct.getEmail();
 //                String personId = acct.getId();
 //                Uri personPhoto = acct.getPhotoUrl();
-                intent.putExtra("fullname",personName);
-                intent.putExtra("email",personEmail);
-                intent.putExtra("phoneNo","9777100189");
-            }
+            intent.putExtra("fullname",personName);
+            intent.putExtra("email",personEmail);
+            intent.putExtra("phoneNo","9777100189");
             startActivity(intent);
             finish();
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.d("message",e.toString());
+            Log.v("Main Error",e.toString());
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
@@ -289,8 +289,8 @@ public class login_screen extends AppCompatActivity {
         else
         {
             callbackManager.onActivityResult(requestCode,resultCode,data);
-            super.onActivityResult(requestCode, resultCode, data);
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 
