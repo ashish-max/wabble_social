@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ActivityOptions;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Pair;
@@ -18,6 +19,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +45,7 @@ public class profile_screen extends AppCompatActivity {
     boolean update_name,update_number,update_email,update_password;
     String  or_name, or_number,or_email;
     ProgressBar pb;
+    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +53,7 @@ public class profile_screen extends AppCompatActivity {
         setContentView(R.layout.activity_profile_screen);
         Intent intent = getIntent();
         boolean isFbLogin = intent.getStringExtra("isFbLogin").equals("true");
+        boolean isGLlogin = intent.getStringExtra("isGLlogin").equals("true");
         //hooks
         fullname = findViewById(R.id.fullnameprofile);
         phoneNo = findViewById(R.id.mobilenumberprofile);
@@ -66,6 +73,11 @@ public class profile_screen extends AppCompatActivity {
 
         //show all data
         showAllData();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         AllUsers.setOnClickListener(new View.OnClickListener() {//friends
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -122,6 +134,7 @@ public class profile_screen extends AppCompatActivity {
         logOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(profile_screen.this);
 
                 alertDialogBuilder.setTitle("Log Out?");
@@ -132,7 +145,11 @@ public class profile_screen extends AppCompatActivity {
                         finish();
                         if (isFbLogin) {
                             LoginManager.getInstance().logOut();
-                        } else {
+                        }
+                        else if(isGLlogin){
+                            mGoogleSignInClient.signOut();
+                        }
+                        else {
                             mAuth.signOut();
                         }
                         startActivity(new Intent(profile_screen.this, login_screen.class));

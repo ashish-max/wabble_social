@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +31,12 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
@@ -49,9 +56,12 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
+import static android.content.ContentValues.TAG;
+
 public class login_screen extends AppCompatActivity {
 
-        private FirebaseAuth mAuth;
+    private static final int RC_SIGN_IN = 100;
+    private FirebaseAuth mAuth;
         Button callSignUp,loginbutton,forgotPass;
         TextInputLayout email, password;
         LoginButton facebook_login_button; // Type is LoginButton not Button
@@ -61,7 +71,7 @@ public class login_screen extends AppCompatActivity {
         TextView sloganlogin;
         ImageView logologin;
         private CallbackManager callbackManager;
-
+        GoogleSignInClient mGoogleSignInClient;
         private static final String EMAIL = "email";
 
         @Override
@@ -96,6 +106,23 @@ public class login_screen extends AppCompatActivity {
             // The code returns a user ig. Print to see what the user returns before proceeding.
             // Also you can setup a Access Token tracker to implement the login method
             // The exact usage depends on your code
+
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestEmail()
+                    .build();
+            // Build a GoogleSignInClient with the options specified by gso.
+            mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+            // Check for existing Google Sign In account, if the user is already signed in
+            // the GoogleSignInAccount will be non-null.
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+            SignInButton signInButton = findViewById(R.id.googlesignin);
+            signInButton.setSize(SignInButton.SIZE_STANDARD);
+            findViewById(R.id.googlesignin).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GooglesignIn();
+                }
+            });
 
             callSignUp.setOnClickListener(new View.OnClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -223,7 +250,48 @@ public class login_screen extends AppCompatActivity {
 
         }
 
-        @Override
+    private void GooglesignIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            // The Task returned from this call is always completed, no need to attach
+            // a listener.
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
+            final Intent intent = new Intent(getApplicationContext(), profile_screen.class);
+            if (acct != null) {
+                String personName = acct.getDisplayName();
+//                String personGivenName = acct.getGivenName();
+//                String personFamilyName = acct.getFamilyName();
+                String personEmail = acct.getEmail();
+//                String personId = acct.getId();
+//                Uri personPhoto = acct.getPhotoUrl();
+                intent.putExtra("fullname",personName);
+                intent.putExtra("email",personEmail);
+                intent.putExtra("phoneNo","9777100189");
+            }
+            startActivity(intent);
+            finish();
+        } catch (ApiException e) {
+            // The ApiException status code indicates the detailed failure reason.
+            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Log.d("message",e.toString());
+        }
+    }
+
+    @Override
           protected void onActivityResult(int requestCode, int resultCode, Intent data) {
           callbackManager.onActivityResult(requestCode, resultCode, data);
           super.onActivityResult(requestCode, resultCode, data);
@@ -306,6 +374,7 @@ public class login_screen extends AppCompatActivity {
                                     intent.putExtra("phoneNo",phoneNoFromDataBase);
                                     intent.putExtra("email",emailFromDataBase);
                                     intent.putExtra("isFbLogin", "false");
+                                    intent.putExtra("isGLlogin", "false");
 
 
                                     Pair[] pairs = new Pair[2];
